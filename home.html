@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="/css/home.css" media="screen" />
+        <title>Inadimplência de alunos</title>
+        <script src="/js/home.js"></script>
+        <script src="/js/TableCsv.js"></script>
+    </head>
+
+    <body>
+        <h1 class="title">Tabela de inadimplência</h1>
+
+        <label for='csvFileInput'>Selecionar Arquivo</label>
+        <input id='csvFileInput' type='file'>
+
+        <table id="table-container" class="table-class"></table>
+
+        <table id="table-container-inadimplencia" class="table-class"></table>
+
+        <script type="module" src="js/main.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/papaparse@5.2.0/papaparse.min.js"></script>
+    </body>
+</html>
