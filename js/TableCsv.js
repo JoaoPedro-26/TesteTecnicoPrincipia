@@ -1,4 +1,4 @@
-export default class {
+export default class teste{
     constructor(root) {
         this.root = root;
     }
@@ -36,7 +36,7 @@ export default class {
             return htmlRetorno;
         })
         this.root.insertAdjacentHTML("beforeend", `
-            <tbody>
+            <tbody id="bodyTabela">
                 ${rowsHtml.join("")}
             </tbody>            
         `);
@@ -45,25 +45,70 @@ export default class {
         for (let i = 0; i < buttonEdit.length; i++) buttonEdit[i].onclick = function () { editButton(i, listaPrincipal) };
 
         var buttonDelete = document.getElementsByClassName("delete");
-        for (let i = 0; i < buttonDelete.length; i++) buttonDelete[i].onclick = function () { deleteButton(i) };
+        for (let i = 0; i < buttonDelete.length; i++) buttonDelete[i].onclick = function () { deleteButton(i, listaPrincipal) };
     }
 }
 
 function editButton(editRow, data) {
+    let stringText = '';
+    data[editRow].map((text, aux) =>{
+        if(aux == 3){
+            stringText+=`
+            <td>
+                <select id="${aux}${editRow}" value="${text} name="status">
+                    <option value="pago">pago</option>
+                    <option value="aberto">aberto</option>
+                </select>
+            </td>`;
+        }else{
+            stringText+= `<td><input type="text" id="${aux}${editRow}" value="${text}"/></td>`;
+        }
+        
+    });
     document.getElementById("row" + editRow).outerHTML = `
     <tr id="row${editRow}">
-        ${data[editRow].map((text, aux) => `<td><input type="text" id="${aux}${editRow}" value="${text}"/></td>`).join("")}
+        ${stringText}
         <td><button class="confirm" id="confirm${editRow}">Confirmar</button> <button class="delete">Deletar</button></td>
     </tr>`;
 
     document.getElementById(`confirm${editRow}`).onclick = function () { confirm(editRow, data) };
 
     var buttonDelete = document.getElementsByClassName("delete");
-    for (let i = 0; i < buttonDelete.length; i++) buttonDelete[i].onclick = function () { deleteButton(i) };
+    for (let i = 0; i < buttonDelete.length; i++) buttonDelete[i].onclick = function () { deleteButton(i, data) };
 }
 
-function deleteButton(rowDelete) {
+function ordenaBodyDelete(listaPrincipal){
+    let count = 0;
+    const tableRoot = document.querySelector("#table-container");
+    document.getElementById("bodyTabela").outerHTML = "";
+    const rowsHtml = listaPrincipal.map(row => {         
+        let htmlRetorno = `
+            <tr id="row${count}">
+                ${row.map((text) => `<td>${text}</td>`).join("")}
+                <td><button type="submit" class="edit">Editar</button> <button class="delete">Deletar</button></td>
+            </tr>
+        `;
+        count++; 
+        return htmlRetorno;
+    })
+    tableRoot.insertAdjacentHTML("beforeend", `
+        <tbody id="bodyTabela">
+            ${rowsHtml.join("")}
+        </tbody>            
+    `);
+
+    var buttonEdit = document.getElementsByClassName("edit");
+    for (let i = 0; i < buttonEdit.length; i++) buttonEdit[i].onclick = function () { editButton(i, listaPrincipal) };
+
+    var buttonDelete = document.getElementsByClassName("delete");
+    for (let i = 0; i < buttonDelete.length; i++) buttonDelete[i].onclick = function () { deleteButton(i, listaPrincipal) };
+}
+
+function deleteButton(rowDelete, data) {
     document.getElementById("row" + rowDelete).outerHTML = "";
+    data.splice(rowDelete, 1);
+    ordenaBodyDelete(data);
+    fazerCalculo(data);
 }
 
 function confirm(confirmRow, data) {
@@ -84,7 +129,7 @@ function confirm(confirmRow, data) {
     for (let i = 0; i < buttonEdit.length; i++) buttonEdit[i].onclick = function () { editButton(i, data) };
 
     var buttonDelete = document.getElementsByClassName("delete");
-    for (let i = 0; i < buttonDelete.length; i++) buttonDelete[i].onclick = function () { deleteButton(i) };
+    for (let i = 0; i < buttonDelete.length; i++) buttonDelete[i].onclick = function () { deleteButton(i, data) };
 
     fazerCalculo(data);
 }
